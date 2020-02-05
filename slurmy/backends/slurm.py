@@ -37,7 +37,7 @@ class Slurm(Base):
     _successcode = '0:0'
     _run_states = set(['PENDING', 'RUNNING'])
 
-    def __init__(self, name = None, log = None, run_script = None, run_args = None, partition = None, exclude = None, clusters = None, qos = None, mem = None, time = None, export = None):
+    def __init__(self, name = None, log = None, run_script = None, run_args = None, partition = None, exclude = None, clusters = None, qos = None, mem = None, time = None, export = None, nodelist=None):
         super(Slurm, self).__init__()
         ## Common backend options
         self.name = name
@@ -52,6 +52,7 @@ class Slurm(Base):
         self.mem = mem
         self.time = time
         self.export = export
+        self.nodelist = nodelist
         ## Internal variables
         self._job_id = None
         self._exitcode = None
@@ -120,6 +121,7 @@ class Slurm(Base):
         if self.mem: submit_command += '--mem={} '.format(self.mem)
         if self.time: submit_command += '--time={} '.format(self.time)
         if self.export: submit_command += '--export={} '.format(self.export)
+        if self.nodelist: submit_command += '--nodelist={} '.format(self.nodelist)
         ## Add run_script setup through wrapper
         run_script = self.wrapper.get(self.run_script)
         submit_command += '{} '.format(run_script)
@@ -165,7 +167,6 @@ class Slurm(Base):
         sacct_command = Base._get_command(sacct_command, Slurm.bid)
         ## Split command string with shlex in a Popen digestable way
         sacct_command = shlex.split(sacct_command)
-
         return sacct_command
 
     @staticmethod
