@@ -5,7 +5,7 @@ logging.basicConfig(level = logging.INFO)
 from .tools.jobhandler import JobHandler
 from .tools.defs import Status, Type, Theme, Mode
 from .tools import options
-from .tools.wrapper import SingularityWrapper
+from .tools.wrapper import SingularityWrapper, Singularity3Wrapper
 from .backends.slurm import Slurm
 from .backends.htcondor import HTCondor
 from .tools.utils import SuccessTrigger, FinishedTrigger, LogMover, CmdLineExec, set_docker_mode

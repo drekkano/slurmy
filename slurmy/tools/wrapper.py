@@ -58,3 +58,11 @@ class SingularityWrapper(Wrapper):
         self._command = 'singularity exec {image} {{args}}'.format(image = image)
         self._condition = 'if [[ -z "$SINGULARITY_INIT" ]]\nthen\n  {command}\n  exit $?\nfi\n'
         super(SingularityWrapper, self).__init__(**kwargs)
+
+class Singularity3Wrapper(Wrapper):
+    # use per default the singularity installed on cvmfs
+    def __init__(self, image, singularity_cmd='/cvmfs/atlas.cern.ch/repo/containers/images/singularity/x86_64-centos7.img', **kwargs):
+        self._wrap_args = '$0 $@'
+        self._command = '{s_cmd} exec --bind /var,/cvmfs,/project,/scratch-local {image} {{args}}'.format(s_cmd = singularity_cmd, image = image)
+        self._condition = 'if [[ -z "$SINGULARITY_NAME" ]]\nthen\n  {command}\n  exit $?\nfi\n'
+        super(Singularity3Wrapper, self).__init__(**kwargs)
