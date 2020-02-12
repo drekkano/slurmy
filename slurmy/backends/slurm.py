@@ -170,8 +170,10 @@ class Slurm(Base):
         return sacct_command
 
     @staticmethod
-    def get_listen_func(partition = None, clusters = None):
+    def get_listen_func():
         user = options.Main.user
+        partition = options.Main._backend_options['Slurm'].get('partition', None)
+        clusters = options.Main._backend_options['Slurm'].get('clusters', None)
         command = Slurm._get_sacct_command('JobID,State,ExitCode', user = user, partition = partition, clusters = clusters)
         ## Define function for Listener
         def listen(results, interval = 1):
