@@ -110,14 +110,14 @@ class CmdLineExec:
         os.system(self._command)
 
 ## Functions for interactive slurmy
-def _get_prompt():
+def _get_prompt(globals=None):
     try:
         from IPython import embed
         return embed
     except ImportError:
         ## Fallback if ipython not available
         import code
-        shell = code.InteractiveConsole(globals())
+        shell = code.InteractiveConsole(globals)
         return shell.interact
 
 def get_sessions():
