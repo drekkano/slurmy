@@ -55,6 +55,9 @@ class Listener(object):
         """
         log.debug('(Listener {}) Update jobs'.format(self._listen_status.name))
         results = self._results.get()
+        # get the lastest result in the queue
+        while not self._results.empty():
+            results = self._results.get()
         if self._parent._debug:
             from pprint import pprint
             ## Print the last 10 entries of the results OrderedDict
