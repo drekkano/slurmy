@@ -3,6 +3,7 @@ import subprocess
 import os
 import shlex
 import logging
+from datetime import datetime, timedelta
 from ..tools.defs import Status
 from .base import Base
 from .defs import bids
@@ -160,7 +161,12 @@ class Slurm(Base):
         sacct_command = 'sacct '
         if partition: sacct_command += '-r {} '.format(partition)
         if clusters: sacct_command += '-M {} '.format(clusters)
-        if job_id: sacct_command += '-j {} '.format(job_id)
+        if job_id:
+            sacct_command += '-j {} '.format(job_id)
+        # if no explicit job ID is given, sacct only looks for jobs after 00:00 that day,
+        # make sure it finds all jobs of the last 7 days
+        else:
+            sacct_command += '-S {} '.format((datetime.now()- timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%S"))
         if user: sacct_command += '-u {} '.format(user)
         sacct_command += '-P -o {}'.format(column)
         ## Wrap command
@@ -170,10 +176,8 @@ class Slurm(Base):
         return sacct_command
 
     @staticmethod
-    def get_listen_func():
+    def get_listen_func(partition, clusters):
         user = options.Main.user
-        partition = options.Main._backend_options['Slurm'].get('partition', None)
-        clusters = options.Main._backend_options['Slurm'].get('clusters', None)
         command = Slurm._get_sacct_command('JobID,State,ExitCode', user = user, partition = partition, clusters = clusters)
         ## Define function for Listener
         def listen(results, interval = 1):

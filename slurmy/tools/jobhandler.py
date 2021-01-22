@@ -398,7 +398,7 @@ class JobHandler(object):
                 ## Get backend class according to bid
                 backend_class = get_backend_class(bid)
                 ## This function also sets the exitcode of the job, so the success evaluation can be done by itself.
-                listen_func = backend_class.get_listen_func()
+                listen_func = backend_class.get_listen_func(self.config.backend.partition, self.config.backend.clusters)
                 listener = Listener(self, listen_func, Status.RUNNING, 'id')
                 listeners.append(listener)
 
